@@ -81,7 +81,7 @@ class TestProjectiveReconstructionFromPairwiseGraph {
 
 		for( String id : db.viewIds ) {
 //			System.out.println("id="+id+" index="+db.viewIds.indexOf(id));
-			listA.add( alg.workGraph.lookupView( id ).camera );
+			listA.add( alg.workGraph.lookupView( id ).projective);
 			listB.add( db.listCameraMatrices.get( db.viewIds.indexOf(id)) );
 		}
 

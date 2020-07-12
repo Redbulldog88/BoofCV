@@ -147,7 +147,7 @@ public class ProjectiveReconstructionFromPairwiseGraph implements VerbosePrint {
 			View view = initProjective.getPairwiseGraphViewByStructureIndex(structViewIdx);
 			if( verbose != null ) verbose.println("  init view.id="+view.id);
 			DMatrixRMaj cameraMatrix = initProjective.utils.structure.views.get(structViewIdx).worldToView;
-			workGraph.addView(view).camera.set(cameraMatrix);
+			workGraph.addView(view).projective.set(cameraMatrix);
 			exploredViews.add(view.id);
 		}
 
@@ -179,7 +179,7 @@ public class ProjectiveReconstructionFromPairwiseGraph implements VerbosePrint {
 
 			// save the results
 			SceneWorkingGraph.View wview = workGraph.addView(selected);
-			wview.camera.set(cameraMatrix);
+			wview.projective.set(cameraMatrix);
 
 			// Add views which are neighbors
 			addOpenForView(wview.pview, open);

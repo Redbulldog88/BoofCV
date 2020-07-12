@@ -18,8 +18,10 @@
 
 package boofcv.alg.sfm.structure2;
 
+import boofcv.struct.calib.CameraPinhole;
 import boofcv.struct.feature.AssociatedIndex;
 import boofcv.struct.feature.AssociatedTripleIndex;
+import georegression.struct.se.Se3_F64;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import org.ddogleg.struct.FastQueue;
 import org.ejml.data.DMatrixRMaj;
@@ -226,12 +228,16 @@ public class SceneWorkingGraph {
 		public final TIntObjectHashMap<Feature> v2g = new TIntObjectHashMap<>();
 
 		// projective camera matrix
-		public final DMatrixRMaj camera = new DMatrixRMaj(3,4);
+		public final DMatrixRMaj projective = new DMatrixRMaj(3,4);
+		// metric camera
+		public final CameraPinhole pinhole = new CameraPinhole();
+		public final Se3_F64 world_to_view = new Se3_F64();
 
 		public void reset() {
 			pview = null;
 			v2g.clear();
-			camera.zero();
+			projective.zero();
+			pinhole.reset();
 		}
 	}
 }

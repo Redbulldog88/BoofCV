@@ -18,17 +18,24 @@
 
 package boofcv.alg.sfm.structure2;
 
+import boofcv.abst.geo.TriangulateNViewsMetric;
 import boofcv.abst.geo.bundle.SceneObservations;
 import boofcv.abst.geo.bundle.SceneStructureMetric;
 import boofcv.alg.geo.GeometricResult;
 import boofcv.alg.geo.MultiViewOps;
 import boofcv.alg.geo.selfcalib.SelfCalibrationLinearDualQuadratic;
+import boofcv.factory.geo.ConfigTriangulation;
+import boofcv.factory.geo.FactoryMultiView;
 import boofcv.struct.image.ImageDimension;
+import georegression.struct.point.Point2D_F64;
+import georegression.struct.se.Se3_F64;
 import org.ejml.data.DMatrixRMaj;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import static boofcv.misc.BoofMiscOps.assertBoof;
 
 /**
  * Upgrades a projective reconstruction into a metric reconstruction.
@@ -49,16 +56,17 @@ public class ProjectiveToMetricReconstruction {
 	// list of workGraph views
 	List<SceneWorkingGraph.View> workViews;
 
-	public boolean process( LookupSimilarImages db , PairwiseImageGraph2 graph, SceneWorkingGraph workGraph )
+	public boolean process( LookupSimilarImages db , PairwiseImageGraph2 imageGraph, SceneWorkingGraph sceneGraph )
 	{
-		workViews = new ArrayList<>(workGraph.getAllViews());
+		workViews = new ArrayList<>(sceneGraph.getAllViews());
 
 		// Self calibration and upgrade views
 		if (!upgradeViewsToMetric(db))
 			return false;
 
 		// Compute 3D feature locations and prepare for bundle adjustment
-		triangulateFeatures();
+//		sceneGraph.createFeaturesFromInliers();
+//		triangulateFeatures();
 		if( !buildMetricSceneForBundleAdjustment())
 			return false;
 
@@ -113,7 +121,35 @@ public class ProjectiveToMetricReconstruction {
 		return true;
 	}
 
-	private void triangulateFeatures() {
+	private void triangulateFeatures(SceneWorkingGraph sceneGraph) {
+		TriangulateNViewsMetric triangulator = FactoryMultiView.
+				triangulateNViewCalibrated(ConfigTriangulation.GEOMETRIC());
+
+		List<Point2D_F64> observations = new ArrayList<>();
+		List<Se3_F64> world_to_view = new ArrayList<>();
+
+		for (int featIter = 0; featIter < sceneGraph.features.size(); featIter++) {
+			SceneWorkingGraph.Feature f = sceneGraph.features.get(featIter);
+			assertBoof(f.visible.size()>=2);
+
+			observations.clear();
+			world_to_view.clear();
+
+			for (int visIter = 0; visIter < f.visible.size(); visIter++) {
+				SceneWorkingGraph.Observation o = f.visible.get(visIter);
+			}
+
+//			triangulator.triangulate();
+		}
+
+		for (int viewIdx = 0; viewIdx < workViews.size(); viewIdx++) {
+			SceneWorkingGraph.View wv = workViews.get(viewIdx);
+			if( wv.projectiveInliers.isEmpty() )
+				continue;
+
+
+
+		}
 		// TODO go through each view. See which features were used as an inlier when computing projective stuff
 
 		// TODO for each feature create a list of views it appears in

@@ -135,7 +135,7 @@ class MockLookupSimilarImagesCircleAround implements LookupSimilarImages {
 		// Create the pairwise graph
 		for (int i = 0; i < numViews; i++) {
 			View v = graph.createNode(viewIds.get(i));
-			v.totalFeatures = numFeatures;
+			v.totalObservations = numFeatures;
 		}
 
 		// Only connect neighbors to each other

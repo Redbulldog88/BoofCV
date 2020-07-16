@@ -103,6 +103,7 @@ public class ProjectiveReconstructionFromPairwiseGraph implements VerbosePrint {
 	 */
 	public boolean process( LookupSimilarImages db , PairwiseImageGraph2 graph ) {
 		exploredViews.clear();
+		workGraph.reset();
 
 		// Score nodes for their ability to be seeds
 		Map<String, SeedInfo> mapScores = scoreNodesAsSeeds(graph);
@@ -151,6 +152,9 @@ public class ProjectiveReconstructionFromPairwiseGraph implements VerbosePrint {
 			exploredViews.add(view.id);
 		}
 
+		// save which features were used for later use in metric reconstruction
+		utils.saveRansacInliers(workGraph.lookupView(utils.seed.id));
+
 		return true;
 	}
 
@@ -176,6 +180,9 @@ public class ProjectiveReconstructionFromPairwiseGraph implements VerbosePrint {
 					verbose.println("Failed to expand/add view="+selected.id+". Discarding.");
 				continue;
 			}
+
+			// save which features were used for later use in metric reconstruction
+			utils.saveRansacInliers(workGraph.lookupView(utils.seed.id));
 
 			// save the results
 			SceneWorkingGraph.View wview = workGraph.addView(selected);
